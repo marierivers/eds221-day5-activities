@@ -7,5 +7,30 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+```
+
+## Task 1
+```{r}
+source(here("src", "storm_runoff.R"))
+
+I_A_range <- seq(from = 0.6, to = 0.8, by = 0.01)
+
+vol <- predict_runoff(I_A = I_A_range, area = 182)
+
+df_runoff <- data.frame(I_A_range, vol)
+
+runoff_plot <- ggplot(data = df_runoff, aes(x = I_A_range, y = vol)) +
+  geom_line() +
+  geom_point()
+
+runoff_plot
+
+ggsave(here("figs", "runoff_I_graph.png"), plot = runoff_plot)
+```
+## Task 2
+```{r}
+
 ```
 
