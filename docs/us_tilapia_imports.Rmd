@@ -1,0 +1,68 @@
+---
+title: "tilapia exports"
+author: "Marie Rivers"
+date: "8/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+```
+## Task 2
+```{r}
+tilapia <- read_csv(here("data", "us_tilapia_imports.csv"))
+
+summary(tilapia)
+names(tilapia)
+dim(tilapia)
+skimr::skim(tilapia)
+```
+
+```{r}
+tilapia_tidy <- tilapia %>% 
+  pivot_longer(cols = -country, names_to = "year", values_to = "annual_vol") # use "quotes" for any column names you're making
+
+class(tilapia_tidy$year)
+
+tilapia_tidy <- tilapia_tidy %>% 
+  mutate(year = as.numeric(year))
+```
+```{r}
+# find total tilapia imports by year
+yearly_tilapia_tot <- tilapia_tidy %>% 
+  dplyr::group_by(year) %>% 
+  summarize(tilapia_tot = sum(annual_vol, na.rm = TRUE))
+```
+
+```{r}
+tilapia_graph <- ggplot(data = yearly_tilapia_tot, aes(x = year, y = tilapia_tot)) +
+  geom_line() +
+  labs (x = "year",
+        y = "total annual volume (thousand pounds)",
+        title = "US Tilapia Imports",
+        subtitle = "source: USDA Economic Research Service")
+
+tilapia_graph
+ggsave(here("figs", "tilapia_graph.png"), plot = tilapia_graph)
+```
+
+```{r}
+tilapia_s_america <- tilapia_tidy %>% 
+  filter(country %in% c("Ecuador", "Honduras", "Costa Rica", "Mexico"))
+
+s_america_graph <- ggplot(data = tilapia_s_america, aes(x = year, y = annual_vol)) +
+  geom_line(aes(color = country)) +
+  labs (x = "year",
+        y = "volume (thousand lbs)",
+        title = "US Tilapia Imports from Ecuador, Honduras, Costa Rica, and Mexico",
+        subtitle = "source: USDA Economic Research Service")
+
+s_america_graph
+ggsave(here("figs", "s_america_graph.jpg"), plot = s_america_graph)
+```
+ggplot(data = out_df_long, aes(x = time, y = population)) +
+  geom_line(aes(color = growth_rate))
+```
